@@ -55,10 +55,10 @@ namespace dragulabot
       {
         if (fail is RequireUserPermissionsAttribute)
         {
-          // GenericEmbed em = new GenericEmbed();
-          // await e.Context.Channel.SendMessageAsync(
-          //   em.SendGeneric(BotMessage.GenericError.InsufficientPermissions)
-          // );
+          GenericEmbed em = new GenericEmbed();
+          await e.Context.Channel.SendMessageAsync(
+            em.SendGeneric(BotMessage.GenericError.InsufficientPermissions)
+          );
         }
       }
     }

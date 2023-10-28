@@ -26,4 +26,18 @@ public class BotMessage
       }
     }
   }
+
+  public class GenericError
+  {
+    public static BotMessage InsufficientPermissions
+    {
+      get
+      {
+        return new BotMessage(
+          null,
+          "❌ User does not have sufficient permissions to run this command."
+        );
+      }
+    }
+  }
 }
