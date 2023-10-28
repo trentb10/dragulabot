@@ -41,6 +41,7 @@ namespace dragulabot
       });
 
       commands.RegisterCommands<General>();
+      commands.RegisterCommands<Moderator>();
 
       await discord.ConnectAsync();
       await Task.Delay(-1);
