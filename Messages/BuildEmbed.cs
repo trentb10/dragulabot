@@ -24,3 +24,18 @@ public class GenericEmbed : Embed
     return BuildEmbed(embed);
   }
 }
+
+public class PingEmbed : Embed
+{
+  public DiscordEmbedBuilder SendPing
+  (
+    string latency
+  ){
+    DiscordEmbedBuilder embed = new DiscordEmbedBuilder
+    {
+      Description = $"🛎️ Latency: **{latency}**ms"
+    };
+
+    return BuildEmbed(embed);
+  }
+}

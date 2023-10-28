@@ -15,4 +15,16 @@ public class General : BaseCommandModule
       em.SendGeneric(BotMessage.GenericInfo.Greet)
     );
   }
+
+  [Command("ping")]
+  public async Task DPing(CommandContext ctx)
+  {
+    // Get latency
+    int latency = ctx.Client.Ping;
+    
+    // Show results
+    PingEmbed em = new PingEmbed();
+
+    await ctx.Channel.SendMessageAsync(em.SendPing(latency.ToString()));
+  }
 }
