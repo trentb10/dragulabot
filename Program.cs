@@ -40,7 +40,7 @@ namespace dragulabot
         StringPrefixes = new[] { "d-" }
       });
 
-      //commands.RegisterCommands<General>();
+      commands.RegisterCommands<General>();
 
       await discord.ConnectAsync();
       await Task.Delay(-1);
