@@ -35,7 +35,7 @@ public class BotMessage
       {
         return new BotMessage(
           null,
-          "❌ User does not have sufficient permissions to run this command."
+          "❌ User is not allowed to run this command."
         );
       }
     }
