@@ -43,6 +43,7 @@ public class Moderator : BaseCommandModule
   [Command("sayembed"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DSayEmbed(CommandContext ctx, [RemainingText] string input = "")
   {
+    
     string titleParam = "--title";
     string descriptionParam = "--content";
 
@@ -54,6 +55,9 @@ public class Moderator : BaseCommandModule
     // Get embed content
 
     string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
+
+    // Delete sent message
+    await ctx.Message.DeleteAsync();
 
     // Send embed
     SayEmbed em = new SayEmbed();
