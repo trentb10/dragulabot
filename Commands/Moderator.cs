@@ -14,6 +14,9 @@ public class Moderator : BaseCommandModule
   [Command("say"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DSay(CommandContext ctx, string channel, [RemainingText] string message = "")
   {
+    // Delete sent message
+    await ctx.Message.DeleteAsync();
+    
     if (channel != "")
     {
       try
