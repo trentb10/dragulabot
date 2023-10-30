@@ -29,7 +29,7 @@ public class Moderator : BaseCommandModule
         // Valid channel, post message in designated channel
         await chan.SendMessageAsync(message);
       }
-      catch
+      catch // First argument is not a channel or failed to find channel, just post message
       {
         await ctx.Channel.SendMessageAsync($"{channel} {message}");
       }
@@ -38,5 +38,25 @@ public class Moderator : BaseCommandModule
     {
       // just discard message mayb
     }
+  }
+
+  [Command("sayembed"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
+  public async Task DSayEmbed(CommandContext ctx, [RemainingText] string input = "")
+  {
+    string titleParam = "--title";
+    string descriptionParam = "--content";
+
+    // Get embed title
+
+    string title = input.Substring(input.IndexOf(titleParam) + titleParam.Length);
+    title = title.Substring(0, title.IndexOf(descriptionParam)).Trim();
+
+    // Get embed content
+
+    string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
+
+    // Send embed
+    SayEmbed em = new SayEmbed();
+    await ctx.Channel.SendMessageAsync(em.SendSayEmbed(title, description));
   }
 }

@@ -39,3 +39,20 @@ public class PingEmbed : Embed
     return BuildEmbed(embed);
   }
 }
+
+public class SayEmbed : Embed
+{
+  public DiscordEmbedBuilder SendSayEmbed
+  (
+    string title,
+    string description
+  ){
+    DiscordEmbedBuilder embed = new DiscordEmbedBuilder
+    {
+      Title = title,
+      Description = description
+    };
+
+    return BuildEmbed(embed);
+  }
+}
