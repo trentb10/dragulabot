@@ -16,7 +16,7 @@ public class Moderator : BaseCommandModule
   {
     // Delete sent message
     await ctx.Message.DeleteAsync();
-    
+
     if (channel != "")
     {
       try
@@ -46,21 +46,18 @@ public class Moderator : BaseCommandModule
   [Command("sayembed"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DSayEmbed(CommandContext ctx, [RemainingText] string input = "")
   {
+    // Delete sent message
+    await ctx.Message.DeleteAsync();
     
     string titleParam = "--title";
     string descriptionParam = "--content";
 
     // Get embed title
-
     string title = input.Substring(input.IndexOf(titleParam) + titleParam.Length);
     title = title.Substring(0, title.IndexOf(descriptionParam)).Trim();
 
     // Get embed content
-
     string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
-
-    // Delete sent message
-    await ctx.Message.DeleteAsync();
 
     // Send embed
     SayEmbed em = new SayEmbed();
