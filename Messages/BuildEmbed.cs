@@ -51,7 +51,8 @@ public class SayEmbed : Embed
     {
       Title = title,
       Description = description
-    };
+    }
+    .WithColor(new DiscordColor("#ff6400"));
 
     return BuildEmbed(embed);
   }
