@@ -10,36 +10,58 @@ using Newtonsoft.Json;
 // These commands may be run by users with Moderator roles only
 
 public class Moderator : BaseCommandModule
-{
+{ 
   [Command("say"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
-  public async Task DSay(CommandContext ctx, string channel, [RemainingText] string message = "")
+  public async Task DSay(CommandContext ctx, [RemainingText] string message = "")
   {
-    // Delete sent message
-    await ctx.Message.DeleteAsync();
-
-    if (channel != "")
+    // Check if message isn't empty
+    if (message != "")
     {
-      try
+      // Delete sent message
+      await ctx.Message.DeleteAsync();
+      // Check if a channel to post to was provided
+
+      // Probably a Channel
+      // ------------------
+      if (message.StartsWith("<#"))
       {
-        // First detect if the channel is actually a channel
-        string[] filter = new string[] { "<", ">", "#" };
+        // Extract channel id
+        string channel = message.Substring(0, message.IndexOf(">") + 1);
+
+        // Trim channel from message
+        string trimmedMessage = message.Replace(channel, string.Empty).Trim();
+        
+        // Get channel id
+        string[] filter = new string[] { "<", ">", "#"};
         foreach (string c in filter)
         {
           channel = channel.Replace(c, string.Empty);
         }
-        DiscordChannel chan = await ctx.Client.GetChannelAsync(Convert.ToUInt64(channel));
-        
-        // Valid channel, post message in designated channel
-        await chan.SendMessageAsync(message);
+
+        // Attempt to send message into channel
+        try
+        {
+          DiscordChannel chan = await ctx.Client.GetChannelAsync(Convert.ToUInt64(channel));
+
+          // Valid channel, post to designated channel
+          await SayToChannel (chan, trimmedMessage);
+        }
+        // Okay, so it's not a channel, or something went wrong, just post the message string
+        catch
+        {
+          await Say(ctx, message);
+        }
       }
-      catch // First argument is not a channel or failed to find channel, just post message
+      // Not a Channel
+      // -------------
+      else
       {
-        await ctx.Channel.SendMessageAsync($"{channel} {message}");
+        await Say(ctx, message);
       }
-    } 
+    }
     else
     {
-      // just discard message mayb
+      // do something, or just ignore
     }
   }
 
@@ -63,4 +85,16 @@ public class Moderator : BaseCommandModule
     SayEmbed em = new SayEmbed();
     await ctx.Channel.SendMessageAsync(em.SendSayEmbed(title, description));
   }
+
+  #region Non-Command methods
+  public async Task Say(CommandContext ctx, string message)
+  {
+    await ctx.Channel.SendMessageAsync(message);
+  }
+
+  public async Task SayToChannel(DiscordChannel chan, string message)
+  {
+    await chan.SendMessageAsync(message);
+  }
+  #endregion
 }
