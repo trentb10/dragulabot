@@ -75,15 +75,14 @@ public class Moderator : BaseCommandModule
     string descriptionParam = "--content";
 
     // Get embed title
-    string title = input.Substring(input.IndexOf(titleParam) + titleParam.Length);
+    string title = input.Substring(input.IndexOf(titleParam) + titleParam.Length).Trim();
     title = title.Substring(0, title.IndexOf(descriptionParam)).Trim();
 
     // Get embed content
     string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
 
     // Send embed
-    SayEmbed em = new SayEmbed();
-    await ctx.Channel.SendMessageAsync(em.SendSayEmbed(title, description));
+    await SayEmbed(ctx, title, description);
   }
 
   #region Non-Command methods
@@ -95,6 +94,12 @@ public class Moderator : BaseCommandModule
   public async Task SayToChannel(DiscordChannel chan, string message)
   {
     await chan.SendMessageAsync(message);
+  }
+
+  public async Task SayEmbed(CommandContext ctx, string title, string description)
+  {
+    SayEmbed em = new SayEmbed();
+    await ctx.Channel.SendMessageAsync(em.SendSayEmbed(title, description));
   }
   #endregion
 }
