@@ -12,10 +12,10 @@ using Newtonsoft.Json;
 public class Moderator : BaseCommandModule
 { 
   [Command("say"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
-  public async Task DSay(CommandContext ctx, [RemainingText] string message = "")
+  public async Task DSay(CommandContext ctx, [RemainingText] string input = "")
   {
     // Check if message isn't empty
-    if (message != "")
+    if (input != "")
     {
       // Delete sent message
       await ctx.Message.DeleteAsync();
@@ -23,13 +23,13 @@ public class Moderator : BaseCommandModule
 
       // Probably a Channel
       // ------------------
-      if (message.StartsWith("<#"))
+      if (input.StartsWith("<#"))
       {
         // Extract channel id
-        string channel = message.Substring(0, message.IndexOf(">") + 1);
+        string channel = input.Substring(0, input.IndexOf(">") + 1);
 
         // Trim channel from message
-        string trimmedMessage = message.Replace(channel, string.Empty).Trim();
+        string trimmedMessage = input.Replace(channel, string.Empty).Trim();
         
         // Get channel id
         string[] filter = new string[] { "<", ">", "#"};
@@ -49,14 +49,14 @@ public class Moderator : BaseCommandModule
         // Okay, so it's not a channel, or something went wrong, just post the message string
         catch
         {
-          await Say(ctx, message);
+          await Say(ctx, input);
         }
       }
       // Not a Channel
       // -------------
       else
       {
-        await Say(ctx, message);
+        await Say(ctx, input);
       }
     }
     else
