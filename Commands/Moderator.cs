@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 // These commands may be run by users with Moderator roles only
 
 public class Moderator : BaseCommandModule
-{ 
+{
   [Command("say"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DSay(CommandContext ctx, [RemainingText] string input = "")
   {
@@ -30,9 +30,9 @@ public class Moderator : BaseCommandModule
 
         // Trim channel from message
         string trimmedMessage = input.Replace(channel, string.Empty).Trim();
-        
+
         // Get channel id
-        string[] filter = new string[] { "<", ">", "#"};
+        string[] filter = new string[] { "<", ">", "#" };
         foreach (string c in filter)
         {
           channel = channel.Replace(c, string.Empty);
@@ -44,7 +44,7 @@ public class Moderator : BaseCommandModule
           DiscordChannel chan = await ctx.Client.GetChannelAsync(Convert.ToUInt64(channel));
 
           // Valid channel, post to designated channel
-          await SayToChannel (chan, trimmedMessage);
+          await SayToChannel(chan, trimmedMessage);
         }
         // Okay, so it's not a channel, or something went wrong, just post the message string
         catch
@@ -68,9 +68,7 @@ public class Moderator : BaseCommandModule
   [Command("sayembed"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DSayEmbed(CommandContext ctx, [RemainingText] string input = "")
   {
-    // Delete sent message
-    await ctx.Message.DeleteAsync();
-    
+    string channelParam = "--channel";
     string titleParam = "--title";
     string descriptionParam = "--content";
 
@@ -81,8 +79,45 @@ public class Moderator : BaseCommandModule
     // Get embed content
     string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
 
+    // Get channel, if provided
+    if (input.Substring(0, input.IndexOf(' ')) == channelParam)
+    {
+      // Extract channel id
+      string channel = input.Substring(input.IndexOf(channelParam), input.IndexOf(">") + 1).Trim();
+      Console.WriteLine(channel);
+      channel = channel.Substring(input.IndexOf("<")).Trim();
+      Console.WriteLine(channel);
+
+      // Get channel id
+      string[] filter = new string[] { "<", ">", "#" };
+      foreach (string c in filter)
+      {
+        channel = channel.Replace(c, string.Empty);
+      }
+
+      // Attempt to send message into channel
+      try
+      {
+        DiscordChannel chan = await ctx.Client.GetChannelAsync(Convert.ToUInt64(channel));
+
+        // Valid channel, post to designated channel
+        await SayEmbedToChannel(chan, title, description);
+      }
+      // Okay, so it's not a channel, or something went wrong, just post the message string
+      catch
+      {
+        await SayEmbed(ctx, title, description);
+      }
+    }
+    else
+    {
+    // Delete sent message
+    await ctx.Message.DeleteAsync();
+
     // Send embed
     await SayEmbed(ctx, title, description);
+
+    }
   }
 
   #region Non-Command methods
@@ -100,6 +135,12 @@ public class Moderator : BaseCommandModule
   {
     SayEmbed em = new SayEmbed();
     await ctx.Channel.SendMessageAsync(em.SendSayEmbed(title, description));
+  }
+
+  public async Task SayEmbedToChannel(DiscordChannel chan, string title, string description)
+  {
+    SayEmbed em = new SayEmbed();
+    await chan.SendMessageAsync(em.SendSayEmbed(title, description));
   }
   #endregion
 }
