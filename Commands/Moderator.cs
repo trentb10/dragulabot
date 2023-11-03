@@ -120,6 +120,22 @@ public class Moderator : BaseCommandModule
     }
   }
 
+  [Command("editsay"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
+  public async Task DGetMessage(CommandContext ctx, [RemainingText] string input = "")
+  {
+    // https://discord.com/channels/1163322018498875468/1166546788845633586/1169797821449388083
+    ulong channelId = Convert.ToUInt64(1166546788845633586);
+    ulong messageId = Convert.ToUInt64(1169797821449388083);
+
+    DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
+    DiscordMessage msg = await chan.GetMessageAsync(messageId);
+    Console.WriteLine(msg);
+    Console.WriteLine(chan);
+    
+    await msg.ModifyAsync("edit me again pls");
+
+  }
+
   #region Non-Command methods
   public async Task Say(CommandContext ctx, string message)
   {
