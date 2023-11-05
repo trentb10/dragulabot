@@ -140,7 +140,7 @@ public class Moderator : BaseCommandModule
       DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
       DiscordMessage msg = await chan.GetMessageAsync(messageId);
 
-      string msgInput = input.Substring(input.IndexOf(ids[2]) + ids[2].Length);
+      string msgInput = input.Substring(input.IndexOf(ids[2]) + ids[2].Length).Trim();
 
       // Discard sent msg by user
       await ctx.Message.DeleteAsync();
