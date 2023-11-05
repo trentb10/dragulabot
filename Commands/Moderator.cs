@@ -121,7 +121,7 @@ public class Moderator : BaseCommandModule
   }
 
   [Command("editsay"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
-  public async Task DGetMessage(CommandContext ctx, [RemainingText] string input = "")
+  public async Task DEditSay(CommandContext ctx, [RemainingText] string input = "")
   {
     // Read for message link. Command can't run without this
     // Just need the last two ids
