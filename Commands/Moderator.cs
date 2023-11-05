@@ -6,6 +6,8 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Newtonsoft.Json;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading.Channels;
 
 // These commands may be run by users with Moderator roles only
 
@@ -128,19 +130,12 @@ public class Moderator : BaseCommandModule
 
     try
     {
-      string[] ids = input.Substring(input.IndexOf("channels/") + 9).Split("/");
-      ids[2] = ids[2].Split(" ")[0];
+      var ChannelMessage = await GetChannelMessage(ctx, input);
 
-      // ids[1] = channel id
-      // ids[2] = message id
+      DiscordChannel chan = ChannelMessage.Item1;
+      DiscordMessage msg = ChannelMessage.Item2;
 
-      ulong channelId = Convert.ToUInt64(ids[1]);
-      ulong messageId = Convert.ToUInt64(ids[2]);
-
-      DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
-      DiscordMessage msg = await chan.GetMessageAsync(messageId);
-
-      string msgInput = input.Substring(input.IndexOf(ids[2]) + ids[2].Length).Trim();
+      string msgInput = input.Substring(input.IndexOf(msg.Id.ToString()) + msg.Id.ToString().Length).Trim();
 
       // Discard sent msg by user
       await ctx.Message.DeleteAsync();
@@ -175,6 +170,20 @@ public class Moderator : BaseCommandModule
   {
     SayEmbed em = new SayEmbed();
     await chan.SendMessageAsync(em.SendSayEmbed(title, description));
+  }
+
+  public async Task<(DiscordChannel, DiscordMessage)> GetChannelMessage(CommandContext ctx, string input)
+  {
+    string[] ids = input.Substring(input.IndexOf("channels/") + 9).Split("/");
+    ids[2] = ids[2].Split(" ")[0];
+
+    ulong channelId = Convert.ToUInt64(ids[1]);
+    ulong messageId = Convert.ToUInt64(ids[2]);
+
+    DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
+    DiscordMessage msg = await chan.GetMessageAsync(messageId);
+
+    return (chan, msg);
   }
   #endregion
 }
