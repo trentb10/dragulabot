@@ -123,17 +123,35 @@ public class Moderator : BaseCommandModule
   [Command("editsay"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
   public async Task DGetMessage(CommandContext ctx, [RemainingText] string input = "")
   {
-    // https://discord.com/channels/1163322018498875468/1166546788845633586/1169797821449388083
-    ulong channelId = Convert.ToUInt64(1166546788845633586);
-    ulong messageId = Convert.ToUInt64(1169797821449388083);
+    // Read for message link. Command can't run without this
+    // Just need the last two ids
 
-    DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
-    DiscordMessage msg = await chan.GetMessageAsync(messageId);
-    Console.WriteLine(msg);
-    Console.WriteLine(chan);
-    
-    await msg.ModifyAsync("edit me again pls");
+    try
+    {
+      string[] ids = input.Substring(input.IndexOf("channels/") + 9).Split("/");
+      ids[2] = ids[2].Split(" ")[0];
 
+      // ids[1] = channel id
+      // ids[2] = message id
+
+      ulong channelId = Convert.ToUInt64(ids[1]);
+      ulong messageId = Convert.ToUInt64(ids[2]);
+
+      DiscordChannel chan = ctx.Channel.Guild.GetChannel(channelId);
+      DiscordMessage msg = await chan.GetMessageAsync(messageId);
+
+      string msgInput = input.Substring(input.IndexOf(ids[2]) + ids[2].Length);
+
+      // Discard sent msg by user
+      await ctx.Message.DeleteAsync();
+
+      // Edit msg
+      await msg.ModifyAsync(msgInput);
+    }
+    catch
+    {
+      await ctx.Channel.SendMessageAsync("You need to provide a valid link to the message you want to edit.");
+    }
   }
 
   #region Non-Command methods
