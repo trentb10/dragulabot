@@ -149,6 +149,39 @@ public class Moderator : BaseCommandModule
     }
   }
 
+  [Command("editembed"), RequireUserPermissions(DSharpPlus.Permissions.ModerateMembers)]
+  public async Task DEditEmbed(CommandContext ctx, [RemainingText] string input = "")
+  {
+    string titleParam = "--title";
+    string descriptionParam = "--content";
+
+    // Read for message link, is required
+
+    try
+    {
+      var ChannelMessage = await GetChannelMessage(ctx, input);
+
+      DiscordChannel chan = ChannelMessage.Item1;
+      DiscordMessage msg = ChannelMessage.Item2;
+
+      // Extract embed title and content
+      string title = input.Substring(input.IndexOf(titleParam) + titleParam.Length).Trim();
+      title = title.Substring(0, title.IndexOf(descriptionParam)).Trim();
+
+      string description = input.Substring(input.IndexOf(descriptionParam) + descriptionParam.Length).Trim();
+
+      // Discard sent msg by user
+      await ctx.Message.DeleteAsync();
+
+      // Edit embed or msg into embed
+      await ModifyEmbed(msg, title, description);
+    }
+    catch
+    {
+      await ctx.Channel.SendMessageAsync("You need to provide a valid link to the message you want to edit.");
+    }
+  }
+
   #region Non-Command methods
   public async Task Say(CommandContext ctx, string message)
   {
@@ -170,6 +203,12 @@ public class Moderator : BaseCommandModule
   {
     SayEmbed em = new SayEmbed();
     await chan.SendMessageAsync(em.SendSayEmbed(title, description));
+  }
+
+  public async Task ModifyEmbed(DiscordMessage msg, string title, string description)
+  {
+    DiscordEmbed em = new SayEmbed().SendSayEmbed(title, description);
+    await msg.ModifyAsync(em);
   }
 
   public async Task<(DiscordChannel, DiscordMessage)> GetChannelMessage(CommandContext ctx, string input)
