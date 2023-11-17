@@ -2,6 +2,8 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using Newtonsoft.Json;
 
 namespace dragulabot
@@ -33,6 +35,18 @@ namespace dragulabot
         MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information,
         LogTimestampFormat = "yyyy-MM-dd HH:mm:ss"
       });
+
+      discord.GuildMemberAdded += async (s, e) =>
+      {
+        // Check if in AiMV server
+        if (e.Guild.Id == 1163322018498875468)
+        {
+          // Get welcome channel
+          DiscordChannel chan = e.Guild.GetChannel(1170024061724803183);
+          string userid = e.Member.Id.ToString();
+          await chan.SendMessageAsync($"Welcome to the Ai Music Videos Community, <@{userid}>!");
+        }
+      };
 
       // Load commands
       var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
