@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.SlashCommands;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Newtonsoft.Json;
@@ -49,6 +50,8 @@ namespace dragulabot
       // };
 
       // Load commands
+      
+      // Regular commands
       var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
       {
         StringPrefixes = new[] { "d-" }
@@ -56,8 +59,11 @@ namespace dragulabot
 
       commands.RegisterCommands<General>();
       commands.RegisterCommands<Moderator>();
-      
       commands.CommandErrored += CmdErroredHandler;
+
+      // Slash commands
+      var slash = discord.UseSlashCommands();
+      slash.RegisterCommands<SlashGeneral>(1163322018498875468);
 
       await discord.ConnectAsync();
       await Task.Delay(-1);
